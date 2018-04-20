@@ -58,12 +58,15 @@ void sm4_encrypt4(const uint32_t rk[32], void *src, const void *dst)
     t3 = _mm_set_epi32(p32[15], p32[11], p32[ 7], p32[ 3]);
     t3 = _mm_shuffle_epi8(t3, flp);
 
+#ifndef SM4NI_UNROLL
+
+    // not unrolled
+
     for (i = 0; i < 32; i++) {
 
         k = rk[i];
         x = t1 ^ t2 ^ t3 ^ _mm_set_epi32(k, k, k, k);
 
-        // 16 parallel S-box calls (4 parallel TAUs).
         y = _mm_and_si128(x, c0f);          // inner affine
         y = _mm_shuffle_epi8(m1l, y);
         x = _mm_srli_epi64(x, 4);
@@ -91,6 +94,55 @@ void sm4_encrypt4(const uint32_t rk[32], void *src, const void *dst)
         t2 = t3;
         t3 = x;
     }
+
+#else
+
+    // unrolled version
+
+#define SM4_TAU_L1 { \
+    y = _mm_and_si128(x, c0f);              \
+    y = _mm_shuffle_epi8(m1l, y);           \
+    x = _mm_srli_epi64(x, 4);               \
+    x = _mm_and_si128(x, c0f);              \
+    x = _mm_shuffle_epi8(m1h, x) ^ y;       \
+    x = _mm_shuffle_epi8(x, shr);           \
+    x = _mm_aesenclast_si128(x, c0f);       \
+    y = _mm_andnot_si128(x, c0f);           \
+    y = _mm_shuffle_epi8(m2l, y);           \
+    x = _mm_srli_epi64(x, 4);               \
+    x = _mm_and_si128(x, c0f);              \
+    x = _mm_shuffle_epi8(m2h, x) ^ y;       \
+    y = x ^ _mm_shuffle_epi8(x, r08) ^      \
+        _mm_shuffle_epi8(x, r16);           \
+    y = _mm_xor_si128(_mm_slli_epi32(y, 2), \
+        _mm_srli_epi32(y, 30));             \
+    x = x ^ y ^ _mm_shuffle_epi8(x, r24);   \
+}
+
+    for (i = 0; i < 32;) {
+
+        k = rk[i++];
+        x = t1 ^ t2 ^ t3 ^ _mm_set_epi32(k, k, k, k);
+        SM4_TAU_L1
+        t0 ^= x;
+
+        k = rk[i++];
+        x = t0 ^ t2 ^ t3 ^ _mm_set_epi32(k, k, k, k);
+        SM4_TAU_L1
+        t1 ^= x;
+
+        k = rk[i++];
+        x = t0 ^ t1 ^ t3 ^ _mm_set_epi32(k, k, k, k);
+        SM4_TAU_L1
+        t2 ^= x;
+
+        k = rk[i++];
+        x = t0 ^ t1 ^ t2 ^ _mm_set_epi32(k, k, k, k);
+        SM4_TAU_L1
+        t3 ^= x;
+    }
+
+#endif
 
     p32 = (uint32_t *) dst;
 
