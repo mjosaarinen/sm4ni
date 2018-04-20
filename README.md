@@ -54,4 +54,6 @@ possible.
 
 ## Notes
 
-This is part of ongoing research work. 
+This is part of ongoing research work, and I think I am the first person who
+discovered this trick. So please give me some credit if you use this.
+
