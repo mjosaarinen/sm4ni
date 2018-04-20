@@ -1,7 +1,7 @@
 # sm4ni
 
 Demonstration that AES-NI instructions and affine transforms can be used to create a fast, vectorized,
-constant tyime implmementation of the Chinese Encryption Standard SM4
+constant time implementation of the Chinese Encryption Standard SM4.
 
 ## Background and Theory
 
