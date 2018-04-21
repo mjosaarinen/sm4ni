@@ -33,7 +33,7 @@ computations.
 Due to the structure of SM4, we are processing 4 blocks in parallel.
 This means that CBC cannot be implemented this way, but CTR and GCM
 are fine. This code example only implements the encryption function 
-and use Intel C intrinsics. The fast block encryption code is in
+and uses Intel C intrinsics. The fast block encryption code is in
 `sm4ni.c`.
 
 ## Testing
@@ -49,11 +49,11 @@ gcc  -o xtest sm4ni.o sm4_ref.o testmain.o
 $ ./xtest 
 SM4 reference     60.906 MB/s
 Vector SM4NI     160.666 MB/s
-mjos@blu:~/Desktop/prj/sm4ni$ 
+$ 
 ```
 Of course support for AES-NI is required. The benchmark indicates 264%
 speed for the new implementation (and it is constant time). Your
-architecture may give different results. Futher optimizations are
+architecture may give very different results. Futher optimizations are
 possible.
 
 ## Notes
