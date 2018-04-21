@@ -42,7 +42,7 @@ and uses Intel C intrinsics. The fast block encryption code is in
 
 ## Testing
 
-Just clone or extract he distibution and:
+Just clone or extract the distibution and:
 ```
 $ make
 gcc -Wall -Ofast -march=native  -c sm4ni.c -o sm4ni.o
@@ -53,10 +53,9 @@ gcc  -o xtest sm4ni.o sm4_ref.o testmain.o
 $ ./xtest 
 SM4 reference     60.906 MB/s
 Vector SM4NI     160.666 MB/s
-$ 
 ```
-Of course support for AES-NI is required. The benchmark indicates 264%
-speed for the new implementation (and it is constant time). Your
+Of course support for AES-NI is required. This benchmark indicates 264%
+speed for the new implementation (and it is constant time!). Your
 architecture may give very different results. Futher optimizations are
 possible.
 
