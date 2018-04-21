@@ -12,8 +12,8 @@ the [Internet Draft](https://www.ietf.org/id/draft-ribose-cfrg-sm4).
 The use of SM4 is now mandated for certain applications within China.
 ARM is introducing special SM4 instructions in its future architectures.
 
-This note shows how to use Intel vector instructions to create about 260%
-faster **constant time** implementation. The trick is to use affine 
+This note shows how to use Intel vector instructions to create about 2-3
+times faster **constant time** implementation. The trick is to use affine 
 transforms to emulate the SM4 S-Box with the AES S-Box. The S-Boxes are
 both based on finite field inversion, but use different affine transforms 
 and even polynomial basis for the finite field. However, different 
@@ -27,12 +27,12 @@ SM4-S(x) = A2(AES-S(A1(x))
 A1(x) = M1*x + C1
 A2(x) = M2*x + C2
 ```
-We note that each affine transform can be constructed from two 4-bit 
-constant time table lookups, which we implement with constant time byte 
-shuffle instructions (table is in a 128-bit register, not memory).
+We note that each affine transform can be constructed from XOR of two 
+4x8-bit table lookups, which we implement with constant time byte 
+shuffle instructions (each 16-entry table is in a single 128-bit register).
 For parallel AES S-Box lookups we use the `AESENCLAST` instruction 
-(nominally intended for last round)  in order to avoid MDS matrix 
-computations.
+(nominally intended for AES last round) in order to avoid AES MDS matrix 
+expansion.
 
 Due to the structure of SM4, we are processing 4 blocks in parallel.
 This means that CBC cannot be implemented this way, but CTR and GCM
