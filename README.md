@@ -16,7 +16,8 @@ faster **constant time** implementation. The trick is to use affine
 transforms to emulate the SM4 S-Box with the AES S-Box. The S-Boxes are
 both based on inversion, but use different affine transforms and even
 polynomial basis for the finite field. However, different polynomial
-bases are affine isomorphic, so two affine transforms A1 and A2 suffice.
+bases are affine isomorphic. We combine various linear operations
+into two affine transforms (one on each side), A1 and A2.
 
 ```
 SM4-S(x) = A2(AES-S(A1(x))
@@ -24,10 +25,12 @@ A1(x) = M1*x + C1
 A2(X) = M2*x + C2
 ```
 Here affine transform consists of a multiplication with a 8x8 binary
-matrix and addition of a constant. We note that affine transforms can 
-be implemented with a couple of byte shuffle instructions. We use the 
-`AESENCLAST` instruction (nominally intended for last round) 
-in order to avoid MDS matrix computations when doing the AES S-Box
+matrix M and addition of a 8-bit constant C. We observe that each affine 
+transform can be implemented with two 4-bit constant time table lookups
+which we implement with constant time byte shuffle instructions (table
+is in a 128-bit register, not memory).
+For parallel AES S-Box lookups we use the `AESENCLAST` instruction 
+(nominally intended for last round)  in order to avoid MDS matrix 
 computations.
 
 Due to the structure of SM4, we are processing 4 blocks in parallel.

@@ -84,7 +84,7 @@ void sm4_encrypt4(const uint32_t rk[32], void *src, const void *dst)
 
         // 4 parallel L1 linear transforms
         y = x ^ _mm_shuffle_epi8(x, r08) ^ _mm_shuffle_epi8(x, r16);
-        y = _mm_xor_si128(_mm_slli_epi32(y, 2), _mm_srli_epi32(y, 30));
+        y = _mm_slli_epi32(y, 2) ^ _mm_srli_epi32(y, 30);
         x = x ^ y ^ _mm_shuffle_epi8(x, r24);
 
         // rotate registers
@@ -114,8 +114,8 @@ void sm4_encrypt4(const uint32_t rk[32], void *src, const void *dst)
     x = _mm_shuffle_epi8(m2h, x) ^ y;       \
     y = x ^ _mm_shuffle_epi8(x, r08) ^      \
         _mm_shuffle_epi8(x, r16);           \
-    y = _mm_xor_si128(_mm_slli_epi32(y, 2), \
-        _mm_srli_epi32(y, 30));             \
+    y = _mm_slli_epi32(y, 2) ^              \
+        _mm_srli_epi32(y, 30);              \
     x = x ^ y ^ _mm_shuffle_epi8(x, r24);   \
 }
 
