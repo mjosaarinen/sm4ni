@@ -25,7 +25,7 @@ with a 8x8 binary matrix M and addition of a 8-bit constant C.
 ```
 SM4-S(x) = A2(AES-S(A1(x))
 A1(x) = M1*x + C1
-A2(X) = M2*x + C2
+A2(x) = M2*x + C2
 ```
 We note that each affine transform can be constructed from two 4-bit 
 constant time table lookups, which we implement with constant time byte 
