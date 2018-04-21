@@ -35,10 +35,10 @@ For parallel AES S-Box lookups we use the `AESENCLAST` instruction
 expansion.
 
 Due to the structure of SM4, we are processing 4 blocks in parallel.
-This means that CBC cannot be implemented this way, but CTR and GCM
-are fine. This code example only implements the encryption function 
-and uses Intel C intrinsics. The fast block encryption code is in
-`sm4ni.c`.
+This means that CBC cannot be implemented this way, but faster parallelizable
+modes like CTR, GCM, and OCB are fine. This code example only implements 
+the block encryption function (block decryption is essentially equivalent but unneeded for decryption with CTR, GCM, OCB) and uses Intel C intrinsics. The 
+fast block encryption code is in `sm4ni.c`.
 
 ## Testing
 
