@@ -15,8 +15,4 @@ $(BIN): $(OBJS)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
-	rm -rf $(DIST)-*.txz $(OBJS) $(BIN) *~
-
-dist:	clean
-	cd ..; \
-	tar cfvz $(DIST)/$(DIST)-`date "+%Y%m%d%H%M"`.tgz $(DIST)/*
+	rm -f $(OBJS) $(BIN)
